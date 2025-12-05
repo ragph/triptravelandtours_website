@@ -1,4 +1,54 @@
 // ========================================
+// SNACKBAR NOTIFICATION SYSTEM
+// ========================================
+
+function showSnackbar(message, type = 'info', duration = 3000) {
+    // Remove any existing snackbar
+    const existingSnackbar = document.querySelector('.snackbar');
+    if (existingSnackbar) {
+        existingSnackbar.remove();
+    }
+
+    // Create snackbar element
+    const snackbar = document.createElement('div');
+    snackbar.className = `snackbar ${type}`;
+
+    // Add icon based on type
+    let icon = '';
+    switch(type) {
+        case 'success':
+            icon = '<i class="fas fa-check-circle"></i>';
+            break;
+        case 'error':
+            icon = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+        case 'warning':
+            icon = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+        case 'info':
+        default:
+            icon = '<i class="fas fa-info-circle"></i>';
+            break;
+    }
+
+    snackbar.innerHTML = `${icon}${message}`;
+    document.body.appendChild(snackbar);
+
+    // Trigger animation
+    setTimeout(() => {
+        snackbar.classList.add('show');
+    }, 100);
+
+    // Auto hide after duration
+    setTimeout(() => {
+        snackbar.classList.remove('show');
+        setTimeout(() => {
+            snackbar.remove();
+        }, 300);
+    }, duration);
+}
+
+// ========================================
 // MOBILE MENU TOGGLE
 // ========================================
 
@@ -182,10 +232,10 @@ if (newsletterForm) {
 
         if (validateEmail(email)) {
             // Show success message
-            alert('Thank you for subscribing! Check your email for exclusive travel deals.');
+            showSnackbar('Thank you for subscribing! Check your email for exclusive travel deals.', 'success');
             emailInput.value = '';
         } else {
-            alert('Please enter a valid email address.');
+            showSnackbar('Please enter a valid email address.', 'error');
         }
     });
 }
@@ -201,7 +251,7 @@ function validateEmail(email) {
 
 const contactForm = document.querySelector('#contactForm');
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // Get form values
@@ -214,21 +264,61 @@ if (contactForm) {
 
         // Validate email
         if (!validateEmail(email)) {
-            alert('Please enter a valid email address.');
+            showSnackbar('Please enter a valid email address.', 'error');
             return;
         }
 
         // Validate required fields
         if (!firstName || !lastName || !subject || !message) {
-            alert('Please fill in all required fields.');
+            showSnackbar('Please fill in all required fields.', 'error');
             return;
         }
 
-        // Show success message
-        alert(`Thank you for contacting us, ${firstName}! We'll get back to you within 24 hours at ${email}.`);
+        // Get the submit button and show loading state
+        const submitBtn = contactForm.querySelector('.btn-submit');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
-        // Reset form
-        contactForm.reset();
+        try {
+            // Prepare data for webhook with separate parameters
+            const webhookData = {
+                to: 'reynon.alfredo@gmail.com',
+                subject: `Contact Form: ${subject}`,
+                contentType: 'HTML',
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: phone || 'Not provided',
+                formSubject: subject,
+                message: message
+            };
+
+            // Send to Make.com webhook
+            const response = await fetch('https://hook.us2.make.com/i2iuhkhhuo5uajy1ryl18r7mx1ss3l49', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(webhookData)
+            });
+
+            if (response.ok) {
+                // Show success message
+                showSnackbar(`Thank you for contacting us, ${firstName}! We'll get back to you within 24 hours at ${email}.`, 'success', 5000);
+                // Reset form
+                contactForm.reset();
+            } else {
+                throw new Error('Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending form:', error);
+            showSnackbar('Sorry, there was an error sending your message. Please try again or contact us directly at contact@triptravelandtours.com', 'error', 5000);
+        } finally {
+            // Restore button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
     });
 }
 
@@ -240,7 +330,7 @@ const playBtn = document.querySelector('.play-btn');
 if (playBtn) {
     playBtn.addEventListener('click', () => {
         // In a real implementation, this would open a video modal
-        alert('Video player would open here! This is a demo landing page.');
+        showSnackbar('Video player would open here! This is a demo landing page.', 'info');
     });
 }
 

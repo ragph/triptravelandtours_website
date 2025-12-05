@@ -1924,7 +1924,7 @@ button {
     background: var(--white);
     padding: 3rem;
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
+    /* box-shadow: var(--shadow-sm); */
 }
 
 .contact-form {
@@ -4365,5 +4365,64 @@ button {
 
     .terms-subtitle {
         font-size: 1rem;
+    }
+}
+
+/* ========================================
+   SNACKBAR NOTIFICATION STYLES
+   ======================================== */
+
+.snackbar {
+    visibility: hidden;
+    min-width: 300px;
+    max-width: 500px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: var(--radius-md);
+    padding: 16px 24px;
+    position: fixed;
+    z-index: 9999;
+    left: 50%;
+    top: -100px;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease, top 0.3s ease;
+}
+
+.snackbar.show {
+    visibility: visible;
+    opacity: 1;
+    top: 20px;
+}
+
+.snackbar.success {
+    background-color: #4CAF50;
+}
+
+.snackbar.error {
+    background-color: #f44336;
+}
+
+.snackbar.info {
+    background-color: #2196F3;
+}
+
+.snackbar.warning {
+    background-color: #ff9800;
+}
+
+.snackbar i {
+    margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+    .snackbar {
+        min-width: 250px;
+        max-width: 90%;
+        font-size: 0.95rem;
+        padding: 14px 20px;
     }
 }

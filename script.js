@@ -49,60 +49,10 @@ function showSnackbar(message, type = 'info', duration = 3000) {
 }
 
 // ========================================
-// MOBILE MENU TOGGLE
+// MOBILE MENU TOGGLE & SMOOTH SCROLLING
 // ========================================
-
-const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-const navMenu = document.querySelector('.nav-menu');
-
-if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        const icon = mobileMenuToggle.querySelector('i');
-        if (navMenu.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
-    });
-}
-
-// ========================================
-// SMOOTH SCROLLING FOR NAVIGATION LINKS
-// ========================================
-
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#' && document.querySelector(href)) {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            // Calculate header height dynamically (top bar + header)
-            const topBar = document.querySelector('.top-bar');
-            const header = document.querySelector('.header');
-            const topBarHeight = topBar ? topBar.offsetHeight : 0;
-            const headerHeight = header ? header.offsetHeight : 0;
-            const headerOffset = topBarHeight + headerHeight;
-            const elementPosition = target.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-
-            // Close mobile menu if open
-            if (navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                const icon = mobileMenuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        }
-    });
-});
+// Note: These are now handled by components/loader.js after header loads
+// This ensures the navigation elements exist before attaching events
 
 // ========================================
 // COUNTDOWN TIMER
@@ -364,78 +314,8 @@ animateElements.forEach(el => {
 // ========================================
 // ACTIVE NAVIGATION HIGHLIGHT ON SCROLL
 // ========================================
-
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-menu a[href^="#"]');
-
-// Combine scroll handlers for better performance
-let ticking = false;
-
-window.addEventListener('scroll', () => {
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            handleScroll();
-            ticking = false;
-        });
-        ticking = true;
-    }
-});
-
-function handleScroll() {
-    const scrollY = window.pageYOffset || window.scrollY;
-
-    // Header scroll effect
-    const header = document.querySelector('.header');
-    if (header) {
-        if (scrollY === 0) {
-            header.classList.remove('scrolled');
-        } else {
-            header.classList.add('scrolled');
-        }
-    }
-
-    // Active navigation highlighting
-    const topBar = document.querySelector('.top-bar');
-    const topBarHeight = topBar ? topBar.offsetHeight : 0;
-    const headerHeight = header ? header.offsetHeight : 0;
-    const scrollOffset = topBarHeight + headerHeight + 50;
-
-    // Find which section is currently in view
-    let current = '';
-
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-
-        // Check if this section is in the viewport
-        if (scrollY + scrollOffset >= sectionTop && scrollY < sectionTop + sectionHeight) {
-            current = section.getAttribute('id');
-        }
-    });
-
-    // If no section matched (we're in a section without ID), keep the previous active one
-    // or default to the last section we scrolled past
-    if (!current) {
-        for (let i = sections.length - 1; i >= 0; i--) {
-            if (scrollY + scrollOffset >= sections[i].offsetTop) {
-                current = sections[i].getAttribute('id');
-                break;
-            }
-        }
-    }
-
-    // If still no match, default to home
-    if (!current) {
-        current = 'home';
-    }
-
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
-}
+// Note: This is now handled by components/loader.js after header loads
+// This ensures the navigation elements exist before attaching scroll events
 
 // ========================================
 // SWAP BUTTON ANIMATION

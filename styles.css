@@ -52,6 +52,8 @@
 
 html {
     width: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px; /* Height of sticky header */
 }
 
 body {
@@ -2197,11 +2199,13 @@ button {
     color: rgba(255, 255, 255, 0.7);
     transition: all 0.3s ease;
     font-size: 0.95rem;
+    display: inline-flex;
+    gap: 0.5rem;
 }
 
 .footer-col ul li a:hover {
     color: var(--accent-yellow);
-    padding-left: 5px;
+    /* padding-left: 5px; */
 }
 
 .contact-info li {
@@ -2210,6 +2214,11 @@ button {
     gap: 0.8rem;
     margin-bottom: 1rem;
     color: rgba(255, 255, 255, 0.7);
+}
+
+.contact-info li a:hover {
+    color: var(--accent-yellow);
+    padding: 0;
 }
 
 .contact-info i {
